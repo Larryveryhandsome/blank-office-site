@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>客製化需求單｜留白事務所</title>
+<meta name="description" content="開源工具客製化需求單：填好後直接傳到 LINE，留白事務所依需求範圍報價。">
+<style>
+:root{--bg:#f5f7fa;--card:#fff;--ink:#0a0a0a;--sub:#5b6573;--line:#d8dee6;--navy:#1e3a5f;--navy2:#2d5580;--accent:#06c755;--warn:#9a6700}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0b1220;--card:#131c2e;--ink:#eef2f7;--sub:#9aa7b8;--line:#26324a;--navy:#8fb4e3;--navy2:#a9c6ec}}
+:root[data-theme="dark"]{--bg:#0b1220;--card:#131c2e;--ink:#eef2f7;--sub:#9aa7b8;--line:#26324a;--navy:#8fb4e3;--navy2:#a9c6ec}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei","Noto Sans TC",sans-serif}
+main{max-width:680px;margin:0 auto;padding:28px 16px 60px}
+.eyebrow{color:var(--navy2);font-weight:700;letter-spacing:.08em;font-size:13px;margin:0}
+h1{font-size:28px;margin:6px 0 8px;color:var(--navy)}
+.lead{color:var(--sub);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 18px;margin:16px 0}
+label{display:block;font-weight:600;margin:16px 0 6px;font-size:15px}
+label small{font-weight:400;color:var(--sub);margin-left:6px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--navy2);box-shadow:0 0 0 3px color-mix(in srgb,var(--navy2) 20%,transparent)}
+textarea{min-height:120px;resize:vertical}
+.tiers{display:grid;gap:10px;margin-top:6px}
+.tier{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;background:var(--bg)}
+.tier input{width:auto;margin-top:5px}
+.tier b{display:block}.tier span{color:var(--sub);font-size:14px}
+.tier:has(input:checked){border-color:var(--navy2);box-shadow:0 0 0 2px color-mix(in srgb,var(--navy2) 25%,transparent)}
+.btns{display:grid;gap:10px;margin-top:20px}
+button,.btn{display:block;width:100%;text-align:center;font:inherit;font-weight:700;border:0;border-radius:12px;padding:14px;cursor:pointer;text-decoration:none}
+.primary{background:var(--accent);color:#fff}
+.secondary{background:transparent;color:var(--navy);border:1px solid var(--line)}
+.err{color:#c4360a;font-size:14px;margin-top:8px;min-height:20px}
+.preview{white-space:pre-wrap;font-size:14px;color:var(--sub);background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:12px;margin-top:12px}
+.note{font-size:13px;color:var(--sub);margin-top:14px}
+footer{text-align:center;color:var(--sub);font-size:13px;margin-top:30px}
+footer a{color:var(--navy2)}
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">留白事務所 × 開源工具</p>
+  <h1>客製化需求單</h1>
+  <p class="lead">填好後按「送出到 LINE」，內容會自動帶進 LINE 對話傳給我們。我們原則上在 1～2 個工作天內回覆初步報價。</p>
+
+  <form class="card" id="f" novalidate>
+    <label for="tool">想客製化哪個工具？</label>
+    <select id="tool" required>
+      <option value="">請選擇</option>
+      <option>門市員工＋股東系統（tw-shop-staff）</option>
+      <option>值班排班（tw-duty-roster）</option>
+      <option>售版編號查詢（tw-listing-lookup）</option>
+      <option>集體帶看行程（tw-showing-route）</option>
+      <option>房仲物件介紹頁（tw-listing-page）</option>
+      <option>分租電費（tw-submeter-bill）</option>
+      <option>進度彙報（tw-progress-report）</option>
+      <option>土增稅神器／青安試算</option>
+      <option>其他或還不確定</option>
+    </select>
+
+    <label for="org">店名或公司名 <small>選填</small></label>
+    <input id="org" maxlength="60" placeholder="例：示範便當店">
+
+    <label for="industry">產業</label>
+    <input id="industry" maxlength="40" placeholder="例：便當店、房仲、美髮、補習班" required>
+
+    <label for="need">想改什麼？ <small>越具體越好報價</small></label>
+    <textarea id="need" maxlength="800" placeholder="例：員工 8 人、兩頭班，想加上抽成計算，並把打卡通知傳到我們的 LINE 群組" required></textarea>
+
+    <label>預算方向 <small>以下皆為起價，實際依範圍報價</small></label>
+    <div class="tiers" id="tiers">
+      <label class="tier"><input type="radio" name="tier" value="安裝代架（NT$3,000 起）"><div><b>① 安裝代架　NT$3,000 起</b><span>幫你裝好、換成你的店名和資料、教你怎麼用</span></div></label>
+      <label class="tier"><input type="radio" name="tier" value="輕度客製（NT$8,000 起）"><div><b>② 輕度客製　NT$8,000 起</b><span>改欄位、流程、版面、品牌顏色，或加一兩個小功能</span></div></label>
+      <label class="tier"><input type="radio" name="tier" value="深度客製（NT$30,000 起）"><div><b>③ 深度客製　NT$30,000 起</b><span>串接 LINE、Google 表單、POS、會計軟體，或做新的模組</span></div></label>
+      <label class="tier"><input type="radio" name="tier" value="還不確定，想先聊聊"><div><b>還不確定</b><span>先聊聊，我們幫你判斷適合哪一種</span></div></label>
+    </div>
+    <label class="tier" style="margin-top:10px"><input type="checkbox" id="maint"><div><b>🔧 也需要長期維護</b><span>每月 NT$1,500 起（選購）</span></div></label>
+
+    <label for="when">希望什麼時候完成？</label>
+    <select id="when">
+      <option>不急，品質優先</option>
+      <option>1 個月內</option>
+      <option>2 週內</option>
+      <option>越快越好</option>
+    </select>
+
+    <label for="name">怎麼稱呼你？</label>
+    <input id="name" maxlength="20" placeholder="例：王先生" required>
+
+    <div class="btns">
+      <button type="submit" class="primary">送出到 LINE</button>
+      <button type="button" class="secondary" id="copy">複製內容（電腦版 LINE 用）</button>
+      <a class="btn secondary" href="https://lin.ee/pdYGARu" target="_blank" rel="noopener">還沒加好友？先加 LINE @812ibtir</a>
+    </div>
+    <div class="err" id="err" role="alert"></div>
+    <div class="preview" id="preview" hidden></div>
+    <p class="note">資料只會帶進你自己的 LINE 對話，這個網頁不會儲存或上傳任何內容。報價、付款方式和發票（由留白創研有限公司開立）以正式報價單為準。</p>
+  </form>
+
+  <footer>
+    <a href="https://github.com/Larryveryhandsome">開源工具總覽</a>・<a href="../">留白事務所</a>
+  </footer>
+</main>
+<script>
+const OA = "@812ibtir";
+const $ = id => document.getElementById(id);
+function compose() {
+  const tier = document.querySelector('input[name="tier"]:checked');
+  const miss = [];
+  if (!$("tool").value) miss.push("工具");
+  if (!$("industry").value.trim()) miss.push("產業");
+  if (!$("need").value.trim()) miss.push("想改什麼");
+  if (!tier) miss.push("預算方向");
+  if (!$("name").value.trim()) miss.push("稱呼");
+  if (miss.length) { $("err").textContent = "還沒填：" + miss.join("、"); return null; }
+  $("err").textContent = "";
+  return [
+    "【客製化需求】",
+    "工具：" + $("tool").value,
+    "店名／公司：" + ($("org").value.trim() || "（未填）"),
+    "產業：" + $("industry").value.trim(),
+    "想改的地方：" + $("need").value.trim(),
+    "預算方向：" + tier.value + ($("maint").checked ? "＋長期維護" : ""),
+    "希望完成：" + $("when").value,
+    "稱呼：" + $("name").value.trim()
+  ].join("\n");
+}
+$("f").addEventListener("submit", e => {
+  e.preventDefault();
+  const t = compose(); if (!t) return;
+  $("preview").hidden = false; $("preview").textContent = t;
+  location.href = "https://line.me/R/oaMessage/" + encodeURIComponent(OA) + "/?" + encodeURIComponent(t);
+});
+$("copy").addEventListener("click", async () => {
+  const t = compose(); if (!t) return;
+  $("preview").hidden = false; $("preview").textContent = t;
+  try { await navigator.clipboard.writeText(t); $("err").textContent = "已複製！請到 LINE 的 @812ibtir 對話貼上送出。"; }
+  catch (x) { $("err").textContent = "瀏覽器不讓自動複製，請手動選取下方文字複製。"; }
+});
+</script>
+</body>
+</html>
