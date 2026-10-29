@@ -88,13 +88,13 @@ footer a{color:var(--navy2)}
     <input id="name" maxlength="20" placeholder="例：王先生" required>
 
     <div class="btns">
-      <button type="submit" class="primary">送出到 LINE</button>
+      <button type="submit" class="primary">複製內容並開啟 LINE</button>
       <button type="button" class="secondary" id="copy">複製內容（電腦版 LINE 用）</button>
-      <a class="btn secondary" href="https://lin.ee/pdYGARu" target="_blank" rel="noopener">還沒加好友？先加 LINE @812ibtir</a>
+      <a class="btn secondary" href="https://line.me/ti/p/xzHT2IywOM" target="_blank" rel="noopener">還沒加好友？先加 LINE 林其衞（0928-880-392）</a>
     </div>
     <div class="err" id="err" role="alert"></div>
     <div class="preview" id="preview" hidden></div>
-    <p class="note">資料只會帶進你自己的 LINE 對話，這個網頁不會儲存或上傳任何內容。報價、付款方式和發票（由留白創研有限公司開立）以正式報價單為準。</p>
+    <p class="note">資料只會複製到你的剪貼簿、由你自己貼到 LINE 對話，這個網頁不會儲存或上傳任何內容。報價、付款方式和發票（由留白創研有限公司開立）以正式報價單為準。</p>
   </form>
 
   <footer>
@@ -102,7 +102,7 @@ footer a{color:var(--navy2)}
   </footer>
 </main>
 <script>
-const OA = "@812ibtir";
+const LINE_URL = "https://line.me/ti/p/xzHT2IywOM";   // 林其衞的 LINE（個人帳號不支援預填訊息：先複製內容，再開 LINE 貼上）
 const $ = id => document.getElementById(id);
 function compose() {
   const tier = document.querySelector('input[name="tier"]:checked');
@@ -129,12 +129,15 @@ $("f").addEventListener("submit", e => {
   e.preventDefault();
   const t = compose(); if (!t) return;
   $("preview").hidden = false; $("preview").textContent = t;
-  location.href = "https://line.me/R/oaMessage/" + encodeURIComponent(OA) + "/?" + encodeURIComponent(t);
+  const go = () => { location.href = LINE_URL; };
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(t).then(() => { $("err").textContent = "已複製需求內容！加林其衞的 LINE 後，在對話裡貼上送出。"; setTimeout(go, 900); }, go);
+  } else { go(); }
 });
 $("copy").addEventListener("click", async () => {
   const t = compose(); if (!t) return;
   $("preview").hidden = false; $("preview").textContent = t;
-  try { await navigator.clipboard.writeText(t); $("err").textContent = "已複製！請到 LINE 的 @812ibtir 對話貼上送出。"; }
+  try { await navigator.clipboard.writeText(t); $("err").textContent = "已複製！請到 林其衞的 LINE 對話貼上送出。"; }
   catch (x) { $("err").textContent = "瀏覽器不讓自動複製，請手動選取下方文字複製。"; }
 });
 </script>
